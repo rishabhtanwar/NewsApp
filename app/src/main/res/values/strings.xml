@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">News App</string>
+    <string name="loading">Please wait...</string>
+    <string name="somehting_went_wrong">Something went wrong</string>
+</resources>
