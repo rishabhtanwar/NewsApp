@@ -1,4 +1,4 @@
-package com.funtoolearn.util
+package com.rishabh.news.util
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

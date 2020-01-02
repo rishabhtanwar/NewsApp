@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import com.funtoolearn.util.Util
 import com.rishabh.news.R
+import com.rishabh.news.util.Util
 
 
 abstract class BaseActivity : AppCompatActivity() {

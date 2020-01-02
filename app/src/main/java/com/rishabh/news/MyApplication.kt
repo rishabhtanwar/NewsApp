@@ -1,8 +1,9 @@
 package com.rishabh.news
 
+
 import android.app.Application
-import com.funtoolearn.di.component.AppComponent
-import com.funtoolearn.di.component.DaggerAppComponent
+import com.rishabh.news.di.component.AppComponent
+import com.rishabh.news.di.component.DaggerAppComponent
 import com.rishabh.news.di.module.ContextModule
 
 

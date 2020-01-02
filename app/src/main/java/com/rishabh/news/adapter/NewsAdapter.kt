@@ -9,12 +9,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rishabh.news.R
 import com.rishabh.news.model.TopHeadlines
+import com.rishabh.news.util.Util
+import io.reactivex.Scheduler
+import io.reactivex.Single
+import io.reactivex.SingleObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
-class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class NewsAdapter :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var newsList: MutableList<TopHeadlines>
+    private lateinit var newsClickObserver: SingleObserver<TopHeadlines>
 
     init {
-        newsList = ArrayList<TopHeadlines>()
+        newsList = ArrayList()
+    }
+
+    fun setObserver(newsClickObserver: SingleObserver<TopHeadlines>) {
+        this.newsClickObserver = newsClickObserver
     }
 
     fun notifyData(newsList: MutableList<TopHeadlines>) {
@@ -24,7 +36,7 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        var view: View =
+        val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.news_item, parent, false)
         return NewsViewHolder(view)
     }
@@ -34,7 +46,7 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as NewsViewHolder).onBind(newsList.get(position))
+        (holder as NewsViewHolder).onBind(newsList.get(position), newsClickObserver)
     }
 
     class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -46,9 +58,19 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             title = itemView.findViewById(R.id.title)
         }
 
-        fun onBind(topHeadlines: TopHeadlines) {
+        fun onBind(topHeadlines: TopHeadlines, newsClickObserver: SingleObserver<TopHeadlines>) {
+            image.setOnClickListener {
+
+                Single.create<TopHeadlines> { emitter ->
+                    if (!emitter.isDisposed) {
+                        emitter.onSuccess(topHeadlines)
+                    }
+
+                }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+                    .subscribe(newsClickObserver)
+            }
             title.text = topHeadlines.title
-            Glide.with(image.context).load(topHeadlines.urlToImage).into(image)
+            Util.loadGlideImage(image.context, imageView = image, url = topHeadlines.urlToImage)
         }
     }
 }

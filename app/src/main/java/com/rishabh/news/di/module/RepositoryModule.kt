@@ -1,6 +1,6 @@
-package com.funtoolearn.di.module
+package com.rishabh.news.di.module
 
-import com.funtoolearn.api.NewsService
+import com.rishabh.news.api.NewsService
 import com.rishabh.news.repository.NewsRepository
 import dagger.Module
 import dagger.Provides

@@ -2,12 +2,14 @@ package com.rishabh.news.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.funtoolearn.model.ApiResponse
 import com.rishabh.news.adapter.NewsAdapter
+import com.rishabh.news.model.ApiResponse
 import com.rishabh.news.model.TopHeadlines
 import com.rishabh.news.repository.NewsRepository
+import com.rishabh.news.util.Util
 import io.reactivex.Observer
 import io.reactivex.Scheduler
+import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -18,16 +20,23 @@ class MainActivityViewModel @Inject constructor(val newsRepository: NewsReposito
     private var newsList: MutableList<TopHeadlines>
     private var compositeDisposable = CompositeDisposable()
     var showProgress: MutableLiveData<Boolean> = MutableLiveData()
+    var showError: MutableLiveData<String> = MutableLiveData()
     var newsAdapter: NewsAdapter
+
 
     init {
         newsAdapter = NewsAdapter()
-        newsList = ArrayList<TopHeadlines>()
+        newsList = ArrayList()
         getNewsList()
     }
 
+    fun setObserver(newsClickObserver: SingleObserver<TopHeadlines>) {
+        newsAdapter.setObserver(newsClickObserver)
 
-    fun getNewsList() {
+    }
+
+
+    private fun getNewsList() {
         showProgress.value = true
         newsRepository.getTopHeadlines("in").observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
@@ -51,11 +60,13 @@ class MainActivityViewModel @Inject constructor(val newsRepository: NewsReposito
                 }
 
                 override fun onError(e: Throwable) {
-                    e.printStackTrace()
+                    showProgress.value = false
+                    showError.value = Util.getErrorMessage(e)
                 }
 
             })
     }
+
 
     override fun onCleared() {
         super.onCleared()

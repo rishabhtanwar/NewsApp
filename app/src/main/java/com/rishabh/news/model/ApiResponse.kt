@@ -1,4 +1,4 @@
-package com.funtoolearn.model
+package com.rishabh.news.model
 
 class ApiResponse<T> {
     var message: String? = null
